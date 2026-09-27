@@ -9,6 +9,7 @@ const pool = new Pool({
   port: process.env.DB_PORT || 5432,
   max: 10,
   idleTimeoutMillis: 30000,
+  ssl: process.env.DB_HOST !== 'localhost' ? { rejectUnauthorized: false } : false
 });
 
 pool.on('error', (err) => {
