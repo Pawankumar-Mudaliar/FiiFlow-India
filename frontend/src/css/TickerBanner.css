@@ -4,7 +4,6 @@ body {
   background-color: #f8fafc;
 }
 
-
 /* Ticker Animation */
 @keyframes ticker {
   0% { transform: translateX(0); }
