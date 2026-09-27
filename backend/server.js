@@ -41,6 +41,7 @@ app.use(express.urlencoded({ extended: true }));
 // POST /api/auth/login
 // POST /api/auth/register
 app.use('/api/auth', authRoutes);
+app.use('/auth', authRoutes);
 
 // FII routes
 // IMPORTANT:
