@@ -236,11 +236,16 @@ app.get('/api/mockup', async (req, res) => {
 // Server timezone is determined by Render/container.
 // If you specifically need IST, we can configure timezone.
 
+// =====================================================
+// 6. CRON SCHEDULER
+// =====================================================
+
+// Run scraper every day at 03:30 PM IST
 cron.schedule(
-  '0 6,18 * * *',
+  '30 15 * * *',
   () => {
     console.log(
-      `\n[${new Date().toLocaleString()}] ⏰ Running FII Scraper...`
+      `\n[${new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })} IST] ⏰ Running FII Scraper at 3:30 PM IST...`
     );
 
     const scriptPath = path.join(
@@ -274,6 +279,10 @@ cron.schedule(
         }
       }
     );
+  },
+  {
+    scheduled: true,
+    timezone: 'Asia/Kolkata' // Indian Standard Time
   }
 );
 
@@ -343,7 +352,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log('🔐 Auth Routes:');
   console.log('   /api/auth');
   console.log('');
-  console.log('⏰ Cron: 06:00 AM & 06:00 PM');
+  console.log('⏰ Cron: 03:30 AM & 03:30 PM');
   console.log('========================================');
   console.log('');
 });
