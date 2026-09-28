@@ -20,14 +20,21 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 EQUITYMASTER_URL = "https://www.equitymaster.com/stock-screener/stocks-recently-bought-by-institutional-investors"
 
-DB_CONFIG = {
-    "dbname": os.environ.get("FII_DB_NAME", "fii_tracker_db"),
-    "user": os.environ.get("FII_DB_USER", "fii_user"),
-    # Set FII_DB_PASSWORD in your environment instead of hardcoding it here.
-    "password": os.environ.get("FII_DB_PASSWORD", "your_password_here"),
-    "host": os.environ.get("FII_DB_HOST", "localhost"),
-    "port": os.environ.get("FII_DB_PORT", "5432")
-}
+import os
+
+def get_db_config():
+    url = os.environ.get("DATABASE_URL")
+    if url:
+        return {"dsn": url, "sslmode": os.environ.get("FII_DB_SSLMODE", "require")}
+    return {
+        "dbname": os.environ.get("FII_DB_NAME", "fii_tracker_db"),
+        "user": os.environ.get("FII_DB_USER", "fii_user"),
+        "password": os.environ.get("FII_DB_PASSWORD", "your_password_here"),
+        "host": os.environ.get("FII_DB_HOST", "localhost"),
+        "port": os.environ.get("FII_DB_PORT", "5432"),
+    }
+
+DB_CONFIG = get_db_config()
 
 def setup_driver():
     options = Options()
