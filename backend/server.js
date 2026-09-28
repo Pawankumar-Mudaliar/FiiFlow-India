@@ -242,7 +242,7 @@ app.get('/api/mockup', async (req, res) => {
 
 // Run scraper every day at 03:30 PM IST
 cron.schedule(
-  '30 15 * * *',
+  '10 16 * * *',
   () => {
     console.log(
       `\n[${new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })} IST] ⏰ Running FII Scraper at 3:30 PM IST...`
