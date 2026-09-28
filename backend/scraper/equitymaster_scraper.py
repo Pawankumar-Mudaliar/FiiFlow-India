@@ -31,13 +31,26 @@ DB_CONFIG = {
 
 def setup_driver():
     options = Options()
+
+    # Required for Render/Linux server environment
     options.add_argument("--headless=new")
-    options.add_argument("--window-size=1920,1080")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
-    options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36')
+    options.add_argument("--window-size=1920,1080")
+
+    options.add_argument(
+        "--user-agent=Mozilla/5.0 (X11; Linux x86_64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    )
+
+    print("🚀 Initializing standard Chrome WebDriver...")
     
-    service = Service(ChromeDriverManager().install())
-    return webdriver.Chrome(service=service, options=options)
+    # Modern Selenium handles driver management automatically
+    driver = webdriver.Chrome(options=options)
+
+    return driver
 
 def clean_symbol(company_name):
     """Generates a fallback ticker symbol if the company isn't on the NSE master list."""
