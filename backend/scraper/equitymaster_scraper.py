@@ -20,12 +20,11 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 EQUITYMASTER_URL = "https://www.equitymaster.com/stock-screener/stocks-recently-bought-by-institutional-investors"
 
-import os
-
 def get_db_config():
+    """Use Render's DATABASE_URL if present, otherwise fall back to FII_DB_* vars."""
     url = os.environ.get("DATABASE_URL")
     if url:
-        return {"dsn": url, "sslmode": os.environ.get("FII_DB_SSLMODE", "require")}
+        return {"dsn": url, "sslmode": os.environ.get("FII_DB_SSLMODE", "prefer")}
     return {
         "dbname": os.environ.get("FII_DB_NAME", "fii_tracker_db"),
         "user": os.environ.get("FII_DB_USER", "fii_user"),
@@ -287,8 +286,10 @@ def ingest_to_db(df):
                 return None
 
         # 1. Load known stocks from your DB
-        cur.execute("SELECT id, company_name FROM stocks;")
-        existing_by_name = {row[1].strip().upper(): {"id": row[0]} for row in cur.fetchall()}
+        cur.execute("SELECT id, company_name, symbol FROM stocks;")
+        rows = cur.fetchall()
+        existing_by_name = {r[1].strip().upper(): {"id": r[0]} for r in rows}
+        existing_by_symbol = {r[2]: r[0] for r in rows if r[2]}
 
         # 2. Find missing stocks that need to be added
         new_stocks = []
@@ -326,7 +327,16 @@ def ingest_to_db(df):
                 sym = ns["symbol"]
                 comp = ns["company"]
                 sector = sector_results.get(sym, "Equities")
-                
+
+                # The symbol column is UNIQUE. If this symbol already exists
+                # (in the DB, or was inserted earlier in this same run for a
+                # similarly-named company), reuse that stock row instead of
+                # inserting a duplicate.
+                if sym in existing_by_symbol:
+                    existing_by_name[comp.upper()] = {"id": existing_by_symbol[sym]}
+                    print(f"⚠️ '{comp}' shares symbol {sym} with an existing stock; reusing it.")
+                    continue
+
                 cur.execute("""
                     INSERT INTO stocks (symbol, company_name, sector)
                     VALUES (%s, %s, %s)
@@ -336,6 +346,7 @@ def ingest_to_db(df):
                 """, (sym, comp, sector))
                 stock_id = cur.fetchone()[0]
                 existing_by_name[comp.upper()] = {"id": stock_id}
+                existing_by_symbol[sym] = stock_id
 
         # 4. Fetch previous FII records for change detection
         cur.execute("""
@@ -472,6 +483,7 @@ def ingest_to_db(df):
     except Exception as e:
         print(f"❌ Database error: {e}")
         conn.rollback()
+        raise
     finally:
         cur.close()
         conn.close()
