@@ -35,28 +35,26 @@ app.use(express.urlencoded({ extended: true }));
 // =====================================================
 // 2. ROUTES
 // =====================================================
+// =====================================================
+// 2. ROUTES
+// =====================================================
 
-// Authentication routes
-// Example:
-// POST /api/auth/login
-// POST /api/auth/register
+// Existing auth and fii routes
 app.use('/api/auth', authRoutes);
 app.use('/auth', authRoutes);
-
-// FII routes
-// IMPORTANT:
-// Your React frontend calls:
-// GET /fii/latest
-//
-// So the router is mounted at /fii.
-//
-// Available routes:
-// GET /fii/latest
-// GET /fii/changes
-// GET /fii/history/:company
-// GET /fii/trend
-// GET /fii/sector-treemap
+app.use('/api/fii', fiiRoutes);
 app.use('/fii', fiiRoutes);
+
+// NEW: Add missing Ticker and Mockup routes
+app.get('/api/ticker', (req, res) => {
+  // Replace with your actual ticker logic/data fetching
+  res.json({ message: "Ticker data connected successfully" }); 
+});
+
+app.get('/api/mockup', (req, res) => {
+  // Replace with your actual mockup logic/data fetching
+  res.json({ message: "Mockup data connected successfully" });
+});
 
 // =====================================================
 // 3. HEALTH CHECK

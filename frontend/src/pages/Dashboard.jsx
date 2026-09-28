@@ -9,9 +9,8 @@ import {
     LogOut
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
-import api from '../services/api'; // Ensure this path matches your project structure
+import api from '../services/api'; 
 import { useNavigate, Link } from 'react-router-dom';
-
 
 function Dashboard() {
     const [tableData, setTableData] = useState([]);
@@ -19,13 +18,12 @@ function Dashboard() {
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
-    // Dynamically load the user from local storage
     const storedUser = localStorage.getItem('fiiUser');
     const user = storedUser ? JSON.parse(storedUser) : { username: 'Guest' };
 
     const handleLogout = () => {
-        localStorage.removeItem('fiiUser'); // Clear the session
-        navigate('/login'); // Kick them back to the login page
+        localStorage.removeItem('fiiUser');
+        navigate('/login'); 
     };
 
     useEffect(() => {
@@ -59,19 +57,16 @@ function Dashboard() {
 
             {/* SIDEBAR */}
             <aside className="w-64 bg-[#050810] border-r border-slate-800 flex flex-col justify-between shrink-0">
-
-                {/* Top Section: Nav Links */}
                 <div className="flex-1 flex flex-col">
                     <nav className="p-4 space-y-1 flex-1">
-                        <a href="#" className="flex items-center space-x-3 px-4 py-3 bg-[#131B2C] text-white rounded-lg border border-slate-800/50">
+                        <Link to="/dashboard" className="flex items-center space-x-3 px-4 py-3 bg-[#131B2C] text-white rounded-lg border border-slate-800/50">
                             <Activity className="w-4 h-4 text-[#00F0FF]" />
                             <span className="text-sm font-semibold">Live FII Flows</span>
-                        </a>
-                        <a href="#" className="flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
+                        </Link>
+                        <Link to="/watchlist" className="flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
                             <Star className="w-4 h-4" />
                             <span className="text-sm font-semibold">Watchlist Sync</span>
-                        </a>
-                        
+                        </Link>
                         <Link to="/sector-mapping" className="flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
                             <PieChart className="w-4 h-4" />
                             <span className="text-sm font-semibold">Sector Mapping</span>
@@ -82,7 +77,6 @@ function Dashboard() {
                         </a>
                     </nav>
 
-                    {/* Settings & Logout (Pushed to bottom of nav list) */}
                     <div className="p-4 border-t border-slate-800/50 space-y-1">
                         <button className="w-full flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
                             <Settings className="w-4 h-4" />
@@ -98,15 +92,12 @@ function Dashboard() {
                     </div>
                 </div>
 
-                {/* User Profile Footer (Dynamic) */}
                 <div className="p-6 border-t border-slate-800 bg-[#0B1120]">
                     <div className="flex items-center space-x-3 mb-4">
                         <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600 text-white font-bold text-lg">
-                            {/* Extracts the first letter of the logged-in username */}
                             {user.username.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                            {/* Displays actual username */}
                             <div className="text-sm font-bold text-white">{user.username}</div>
                             <div className="text-xs text-slate-500">Terminal Access</div>
                         </div>
@@ -119,8 +110,6 @@ function Dashboard() {
 
             {/* MAIN CONTENT AREA */}
             <main className="flex-1 overflow-y-auto p-8">
-
-                {/* Header */}
                 <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 space-y-4 md:space-y-0">
                     <div>
                         <h1 className="text-3xl font-bold text-white tracking-tight mb-1">NSE Foreign Institutional Flows</h1>
@@ -143,7 +132,6 @@ function Dashboard() {
                     </div>
                 </header>
 
-                {/* KPI Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div className="bg-[#131B2C] border border-slate-800 rounded-xl p-6">
                         <div className="text-[10px] font-bold text-slate-500 tracking-widest uppercase mb-4">Net FII Inflow (MTD)</div>
@@ -173,7 +161,6 @@ function Dashboard() {
                     </div>
                 </div>
 
-                {/* Chart Section */}
                 <div className="bg-[#131B2C] border border-slate-800 rounded-xl p-6 mb-8">
                     <div className="flex items-center justify-between mb-8">
                         <div className="text-[11px] font-bold text-white tracking-widest uppercase">Cumulative FII Net Accumulation Spread (YTD)</div>
@@ -207,7 +194,6 @@ function Dashboard() {
                     </div>
                 </div>
 
-                {/* Data Table Section */}
                 <div className="bg-[#131B2C] border border-slate-800 rounded-xl overflow-hidden">
                     <table className="w-full text-left border-collapse">
                         <thead>
