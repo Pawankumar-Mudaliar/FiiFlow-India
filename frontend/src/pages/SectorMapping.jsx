@@ -1,27 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import { hierarchy, treemap } from 'd3-hierarchy';
-import { 
-  Activity, 
-  Star, 
-  PieChart, 
-  FileText, 
-  Settings, 
-  LogOut, 
-  ArrowUpRight, 
-  ArrowDownRight, 
-  Layers,
-  Lock
+import {
+  Activity,
+  Star,
+  PieChart,
+  FileText,
+  Settings,
+  BarChart2,
+  LogOut,
+  ArrowUpRight,
+  ArrowDownRight,
+  Layers
 } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../services/api';
 
 function getFiiColor(change) {
   if (change >= 2.5) return '#00E676';
-  if (change >= 1.0) return '#059669'; 
-  if (change >= 0.2) return '#047857'; 
-  if (change > -0.2) return '#1E293B'; 
-  if (change > -1.0) return '#991B1B'; 
-  if (change > -2.5) return '#DC2626'; 
+  if (change >= 1.0) return '#059669';
+  if (change >= 0.2) return '#047857';
+  if (change > -0.2) return '#1E293B';
+  if (change > -1.0) return '#991B1B';
+  if (change > -2.5) return '#DC2626';
   return '#FF5252';
 }
 
@@ -33,10 +33,10 @@ export default function SectorMapping() {
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Authentication check
+  // Check login status to toggle sidebar visibility
   const storedUser = localStorage.getItem('fiiUser');
-  const user = storedUser ? JSON.parse(storedUser) : null;
-  const isAuthenticated = Boolean(user);
+  const isAuthenticated = Boolean(storedUser);
+  const user = isAuthenticated ? JSON.parse(storedUser) : { username: 'Guest' };
 
   const handleLogout = () => {
     localStorage.removeItem('fiiUser');
@@ -93,7 +93,7 @@ export default function SectorMapping() {
   }
 
   return (
-    <div className="flex h-full min-h-screen bg-[#0A0F1C] text-slate-300 font-sans selection:bg-[#00F0FF] selection:text-black">
+    <div className="flex h-screen overflow-hidden bg-[#0A0F1C] text-slate-300 font-sans selection:bg-[#00F0FF] selection:text-black">
       
       {/* SIDEBAR - Only visible if logged in */}
       {isAuthenticated && (
@@ -112,17 +112,17 @@ export default function SectorMapping() {
                 <PieChart className="w-4 h-4" />
                 <span className="text-sm font-semibold">Sector Mapping</span>
               </Link>
-              <a href="#" className="flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
-                <FileText className="w-4 h-4" />
-                <span className="text-sm font-semibold">Regulatory Ledger</span>
-              </a>
+              <Link to="/historicalanalysis" className="flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
+                <BarChart2 className="w-4 h-4" />
+                <span className="text-sm font-semibold">Historical Analysis</span>
+              </Link>
             </nav>
 
             <div className="p-4 border-t border-slate-800/50 space-y-1">
-              <button className="w-full flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
+              <Link to="/settings" className="w-full flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
                 <Settings className="w-4 h-4" />
                 <span className="text-sm font-semibold">Settings</span>
-              </button>
+              </Link>
               <button onClick={handleLogout} className="w-full flex items-center space-x-3 px-4 py-3 text-[#FF5252] hover:bg-[#FF5252]/10 rounded-lg transition-colors">
                 <LogOut className="w-4 h-4" />
                 <span className="text-sm font-semibold">Logout</span>
@@ -130,13 +130,18 @@ export default function SectorMapping() {
             </div>
           </div>
 
-          <div className="p-6 border-t border-slate-800 bg-[#0B1120] flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center text-white font-bold text-lg">
-              {user.username.charAt(0).toUpperCase()}
+          <div className="p-6 border-t border-slate-800 bg-[#0B1120]">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-slate-600 text-white font-bold text-lg">
+                {user.username.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <div className="text-sm font-bold text-white">{user.username}</div>
+                <div className="text-xs text-slate-500">Terminal Access</div>
+              </div>
             </div>
-            <div>
-              <div className="text-sm font-bold text-white">{user.username}</div>
-              <div className="text-xs text-slate-500">Terminal Access</div>
+            <div className="text-[10px] text-slate-600 uppercase tracking-widest">
+              Session Active
             </div>
           </div>
         </aside>
@@ -168,45 +173,10 @@ export default function SectorMapping() {
           </div>
         </header>
 
-        {/* Treemap Container with Auth Gating */}
+        {/* Treemap Container */}
         <div ref={containerRef} className="flex-1 min-h-[640px] w-full bg-[#050810] border border-slate-800 rounded-xl relative overflow-hidden p-2">
           
-          {/* 1. Blur and Lock Overlay for Unauthenticated Users */}
-          {!isAuthenticated && (
-            <div className="absolute inset-0 z-40 bg-[#050810]/75 backdrop-blur-md flex items-center justify-center p-6">
-              <div className="max-w-md w-full bg-[#0B1120] border border-slate-700/80 rounded-2xl p-8 text-center shadow-[0_0_50px_rgba(0,0,0,0.8)]">
-                <div className="w-14 h-14 bg-[#00F0FF]/10 border border-[#00F0FF]/30 rounded-2xl flex items-center justify-center mx-auto mb-5">
-                  <Lock className="text-[#00F0FF] w-7 h-7" />
-                </div>
-                
-                <h2 className="text-xl font-bold text-white tracking-wide uppercase mb-2">
-                  Please Login to See Clear Details
-                </h2>
-                
-                <p className="text-sm text-slate-400 leading-relaxed mb-6">
-                  Depository sector allocations, market cap weightings, and real-time institutional shifts are restricted to verified institutional credentials.
-                </p>
-
-                <div className="space-y-3">
-                  <button
-                    onClick={() => navigate('/login')}
-                    className="w-full bg-[#00F0FF] text-black font-bold py-3.5 rounded-lg text-sm tracking-wider hover:bg-[#00d9e6] transition-all shadow-[0_0_20px_rgba(0,240,255,0.3)]"
-                  >
-                    AUTHENTICATE TO UNLOCK
-                  </button>
-                  <button
-                    onClick={() => navigate('/register')}
-                    className="w-full bg-slate-800/60 text-slate-300 font-semibold py-3 rounded-lg text-xs hover:bg-slate-800 hover:text-white transition-all border border-slate-700"
-                  >
-                    Request Institutional Access
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 2. Treemap Content (blurred and non-interactive when locked) */}
-          <div className={!isAuthenticated ? 'filter blur-sm opacity-30 pointer-events-none select-none' : ''}>
+          <div className="w-full h-full">
             {isLoading ? (
               <div className="w-full h-full min-h-[600px] flex items-center justify-center text-slate-500 text-sm">
                 Synthesizing sector-level depository allocations...
@@ -246,7 +216,6 @@ export default function SectorMapping() {
                     <div
                       key={stock.data.company}
                       onMouseEnter={(e) => {
-                        if (!isAuthenticated) return;
                         const rect = e.currentTarget.getBoundingClientRect();
                         setTooltip({
                           data: stock.data,
@@ -284,7 +253,7 @@ export default function SectorMapping() {
           </div>
 
           {/* Floating Tooltip */}
-          {tooltip && isAuthenticated && (
+          {tooltip && (
             <div
               className="fixed -translate-x-1/2 -translate-y-full bg-[#0B1120] border border-slate-700 p-3 rounded-lg shadow-2xl pointer-events-none z-50 text-xs w-52"
               style={{ left: tooltip.x, top: tooltip.y }}

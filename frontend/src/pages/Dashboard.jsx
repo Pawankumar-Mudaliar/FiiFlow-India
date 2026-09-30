@@ -4,12 +4,13 @@ import {
     Star,
     PieChart,
     FileText,
+    BarChart2,
     Settings,
     ChevronDown,
-    LogOut
+    LogOut,
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Tooltip, Cell } from 'recharts';
-import api from '../services/api'; 
+import api from '../services/api';
 import { useNavigate, Link } from 'react-router-dom';
 
 function Dashboard() {
@@ -23,7 +24,7 @@ function Dashboard() {
 
     const handleLogout = () => {
         localStorage.removeItem('fiiUser');
-        navigate('/login'); 
+        navigate('/login');
     };
 
     useEffect(() => {
@@ -53,7 +54,8 @@ function Dashboard() {
     }, []);
 
     return (
-        <div className="flex h-full min-h-screen bg-[#0A0F1C] text-slate-300 font-sans selection:bg-[#00F0FF] selection:text-black overflow-hidden">
+        <div className="flex h-screen bg-[#0A0F1C] text-slate-300 font-sans selection:bg-[#00F0FF] selection:text-black overflow-hidden">
+            {/* CHANGED: Replaced "h-full min-h-screen" with "h-screen" to lock the layout height */}
 
             {/* SIDEBAR */}
             <aside className="w-64 bg-[#050810] border-r border-slate-800 flex flex-col justify-between shrink-0">
@@ -71,17 +73,18 @@ function Dashboard() {
                             <PieChart className="w-4 h-4" />
                             <span className="text-sm font-semibold">Sector Mapping</span>
                         </Link>
-                        <a href="#" className="flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
-                            <FileText className="w-4 h-4" />
-                            <span className="text-sm font-semibold">Regulatory Ledger</span>
-                        </a>
+                        <Link to="/historicalanalysis" className="flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
+                            <BarChart2 className="w-4 h-4" />
+                            <span className="text-sm font-semibold">Historical Analysis</span>
+                        </Link>
                     </nav>
 
                     <div className="p-4 border-t border-slate-800/50 space-y-1">
-                        <button className="w-full flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
+                        <Link to="/settings" className="w-full flex items-center space-x-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800/30 rounded-lg transition-colors">
                             <Settings className="w-4 h-4" />
                             <span className="text-sm font-semibold">Settings</span>
-                        </button>
+                        </Link>
+
                         <button
                             onClick={handleLogout}
                             className="w-full flex items-center space-x-3 px-4 py-3 text-[#FF5252] hover:bg-[#FF5252]/10 rounded-lg transition-colors"
@@ -250,7 +253,6 @@ function Dashboard() {
                         </tbody>
                     </table>
                 </div>
-
             </main>
         </div>
     );

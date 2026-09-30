@@ -12,13 +12,14 @@ import { useNavigate } from 'react-router-dom';
 function Landing() {
   const [mockupData, setMockupData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // 1. Initialize the navigate function
+  const navigate = useNavigate();
 
   useEffect(() => {
       const fetchDashboardData = async () => {
           try {
-              // Fetch the latest snapshot to populate the landing page mockup
               const response = await api.get('/fii/latest');
-              // Grab just the top 4 records for the visual
               setMockupData(response.data.data.slice(0, 4));
           } catch (error) {
               console.error("Error fetching mockup data:", error);
@@ -53,10 +54,12 @@ function Landing() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6">
-            <button onClick={() => navigate('/dashboard')} className="bg-[#00F0FF] text-black px-8 py-3.5 rounded font-bold text-sm tracking-wide hover:bg-[#00d9e6] transition-colors w-full sm:w-auto">
+            {/* 2. Fixed trailing space in '/login' */}
+            <button onClick={() => navigate('/login')} className="bg-[#00F0FF] text-black px-8 py-3.5 rounded font-bold text-sm tracking-wide hover:bg-[#00d9e6] transition-colors w-full sm:w-auto">
                 LAUNCH TERMINAL
             </button>
-            <button className="flex items-center border border-slate-600 text-white px-8 py-3.5 rounded font-bold text-sm tracking-wide hover:bg-slate-800 transition-colors w-full sm:w-auto">
+            {/* 3. Added onClick handler to map to login */}
+            <button onClick={() => navigate('/login')} className="flex items-center border border-slate-600 text-white px-8 py-3.5 rounded font-bold text-sm tracking-wide hover:bg-slate-800 transition-colors w-full sm:w-auto">
                 EXPLORE METHODOLOGY <ChevronRight className="ml-2 w-4 h-4" />
             </button>
         </div>

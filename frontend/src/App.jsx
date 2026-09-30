@@ -6,7 +6,9 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Watchlist from './pages/Watchlist';
-import SectorMapping from './pages/SectorMapping';
+import SectorMapping from './pages/SectorMapping'
+import Settings from './pages/Settings';
+import HistoricalAnalysis from './pages/HistoricalAnalysis';
 
 function App() {
   return (
@@ -30,6 +32,8 @@ function App() {
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/watchlist" element={<Watchlist />} />
             <Route path="/sector-mapping" element={<SectorMapping />} />
+            <Route path="/settings" element = {<Settings />} />
+            <Route path="/historicalanalysis" element = {<HistoricalAnalysis />} />
           </Routes>
         </main>
         

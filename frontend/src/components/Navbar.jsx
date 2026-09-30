@@ -38,10 +38,10 @@ function Navbar() {
             Dashboard
           </Link>
         )}
-        <a href="#" className="hover:text-white transition-colors">Historical Analysis</a>
+        
         <Link to="/sector-mapping" className="hover:text-white transition-colors">Sector Mapping</Link>
-        <a href="#" className="hover:text-white transition-colors">Institutional APIs</a>
-        <a href="#" className="hover:text-white transition-colors">Pricing</a>
+        <Link to="/historicalanalysis" className="hover:text-white transition-colors">Historical Analysis</Link>
+
       </div>
 
       {/* Right Side: User Profile OR Login Button */}
